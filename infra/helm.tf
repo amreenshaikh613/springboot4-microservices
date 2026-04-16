@@ -15,8 +15,13 @@ resource "helm_release" "api-gateway" {
 
   set {
     name  = "containerPort"
-    value = 8081
+    value = 9000
   }
+
+  depends_on = [
+  kubernetes_config_map.common_config
+]
+
 }
 
 resource "helm_release" "product-service" {
@@ -36,8 +41,12 @@ resource "helm_release" "product-service" {
 
   set {
     name  = "containerPort"
-    value = 8083
+    value = 8081
   }
+  
+  depends_on = [
+  kubernetes_config_map.common_config
+]
 }
 
 resource "helm_release" "order-service" {
@@ -59,6 +68,10 @@ resource "helm_release" "order-service" {
     name  = "containerPort"
     value = 8082
   }
+
+  depends_on = [
+  kubernetes_config_map.common_config
+]
 }
 
 resource "helm_release" "inventory-service" {
@@ -80,6 +93,10 @@ resource "helm_release" "inventory-service" {
     name  = "containerPort"
     value = 8084
   }
+
+  depends_on = [
+  kubernetes_config_map.common_config
+]
 }
 
 resource "helm_release" "notification-service" {
@@ -101,5 +118,10 @@ resource "helm_release" "notification-service" {
     name  = "containerPort"
     value = 8085
   }
+
+  depends_on = [
+  kubernetes_config_map.common_config
+]
+
 }
 

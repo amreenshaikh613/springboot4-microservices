@@ -1,6 +1,6 @@
-output "cluster_name" {
-  value = module.eks.cluster_name
-}
+#output "cluster_name" {
+#  value = module.eks.cluster_name
+#}
 
 output "ecr_order_url" {
   value = aws_ecr_repository.order.repository_url

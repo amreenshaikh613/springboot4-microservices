@@ -5,6 +5,7 @@ resource "aws_ecr_repository" "order" {
   image_scanning_configuration {
     scan_on_push = true
   }
+  force_delete = true
 }
 
 resource "aws_ecr_repository" "product" {
@@ -14,6 +15,8 @@ resource "aws_ecr_repository" "product" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  force_delete = true
 }
 
 resource "aws_ecr_repository" "inventory" {
@@ -23,6 +26,8 @@ resource "aws_ecr_repository" "inventory" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  force_delete = true
 }
 
 resource "aws_ecr_repository" "gateway" {
@@ -32,6 +37,8 @@ resource "aws_ecr_repository" "gateway" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  force_delete = true
 }
 
 resource "aws_ecr_repository" "notification" {
@@ -41,4 +48,6 @@ resource "aws_ecr_repository" "notification" {
   image_scanning_configuration {
     scan_on_push = true
   }
+
+  force_delete = true
 }
