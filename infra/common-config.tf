@@ -15,6 +15,8 @@ data = {
 
   SPRING_KAFKA_BOOTSTRAP_SERVERS = "broker.default.svc.cluster.local:29092"
 
+  SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI = "http://keycloak.default.svc.cluster.local:8080/realms/spring-microservices-security-realm"
+
   # MongoDB
   SPRING_MONGODB_URI                     = "mongodb://root:password@mongodb:27017/product_service?authSource=admin"
   SPRING_MONGODB_HOST                    = "mongodb"
