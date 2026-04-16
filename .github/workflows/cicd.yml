@@ -31,6 +31,31 @@ jobs:
     # BUILD & PUSH SERVICES
     # =========================
 
+    - name: Build Order Service
+      run: |
+        cd services/order-service
+        mvn clean package -DskipTests
+
+    - name: Build Product Service
+      run: |
+        cd services/product-service
+        mvn clean package -DskipTests
+
+    - name: Build Inventory Service
+      run: |
+        cd services/inventory-service
+        mvn clean package -DskipTests
+
+    - name: Build Notification Service
+      run: |
+        cd services/notification-service
+        mvn clean package -DskipTests
+
+    - name: Build API Gateway Service
+      run: |
+        cd services/api-gateway
+        mvn clean package -DskipTests
+
     - name: Build & Push Order Service
       run: |
         docker build -t order-service ./services/order-service
