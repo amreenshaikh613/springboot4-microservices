@@ -1,0 +1,79 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches: [ "main", "eks" ]
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-west-2
+  ECR_REGISTRY: 741458575095.dkr.ecr.us-west-2.amazonaws.com
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Login to ECR
+      uses: aws-actions/amazon-ecr-login@v1
+
+    # =========================
+    # BUILD & PUSH SERVICES
+    # =========================
+
+    - name: Build & Push Order Service
+      run: |
+        docker build -t order-service ./services/order-service
+        docker tag order-service:latest $ECR_REGISTRY/order-service:latest
+        docker push $ECR_REGISTRY/order-service:latest
+
+    - name: Build & Push Product Service
+      run: |
+        docker build -t product-service ./services/product-service
+        docker tag product-service:latest $ECR_REGISTRY/product-service:latest
+        docker push $ECR_REGISTRY/product-service:latest
+
+    - name: Build & Push Inventory Service
+      run: |
+        docker build -t inventory-service ./services/inventory-service
+        docker tag inventory-service:latest $ECR_REGISTRY/inventory-service:latest
+        docker push $ECR_REGISTRY/inventory-service:latest
+
+    - name: Build & Push Notification Service
+      run: |
+        docker build -t notification-service ./services/notification-service
+        docker tag notification-service:latest $ECR_REGISTRY/notification-service:latest
+        docker push $ECR_REGISTRY/notification-service:latest
+
+    - name: Build & Push API Gateway
+      run: |
+        docker build -t api-gateway ./services/api-gateway
+        docker tag api-gateway:latest $ECR_REGISTRY/api-gateway:latest
+        docker push $ECR_REGISTRY/api-gateway:latest
+
+    # =========================
+    # TERRAFORM DEPLOYMENT
+    # =========================
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform Init
+      run: |
+        cd infra
+        terraform init
+
+    - name: Terraform Apply
+      run: |
+        cd infra
+        terraform apply -auto-approve

@@ -1,0 +1,9 @@
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/ProductServiceApplication.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/config/ObservationConfig.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/config/OpenAPIConfig.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/controller/ProductController.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/controller/dto/ProductRequest.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/dto/ProductResponse.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/model/Product.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/repository/ProductRepository.java
+/home/amreen/spring-projects/springboot4-microservices/product-service/src/main/java/com/demo/product/service/ProductService.java
