@@ -113,7 +113,6 @@ jobs:
     - name: Terraform Apply
       run: |
         cd infra
-        terraform apply -auto-approve
-         \
-       -var="image_tag=${IMAGE_TAG}"
+        terraform apply -auto-approve -var="image_tag=${IMAGE_TAG}"
+        terraform apply -auto-approve      -var="image_tag=${IMAGE_TAG}"
 
