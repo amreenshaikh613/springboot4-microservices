@@ -1,0 +1,44 @@
+repositories:
+  - name: stable
+    url: https://charts.helm.sh/stable
+
+releases:
+  - name: order-service
+    namespace: default
+    chart: ./helm/order-service
+    values:
+      - image:
+          repository: 741458575095.dkr.ecr.us-west-2.amazonaws.com/order-service
+          tag: {{ .Values.imageTag }}
+
+  - name: product-service
+    namespace: default
+    chart: ./helm/product-service
+    values:
+      - image:
+          repository: 741458575095.dkr.ecr.us-west-2.amazonaws.com/product-service
+          tag: {{ .Values.imageTag }}
+
+  - name: inventory-service
+    namespace: default
+    chart: ./helm/inventory-service
+    values:
+      - image:
+          repository: 741458575095.dkr.ecr.us-west-2.amazonaws.com/inventory-service
+          tag: {{ .Values.imageTag }}
+
+  - name: notification-service
+    namespace: default
+    chart: ./helm/notification-service
+    values:
+      - image:
+          repository: 741458575095.dkr.ecr.us-west-2.amazonaws.com/notification-service
+          tag: {{ .Values.imageTag }}
+
+  - name: api-gateway
+    namespace: default
+    chart: ./helm/api-gateway
+    values:
+      - image:
+          repository: 741458575095.dkr.ecr.us-west-2.amazonaws.com/api-gateway
+          tag: {{ .Values.imageTag }}
