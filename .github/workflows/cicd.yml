@@ -74,34 +74,24 @@ jobs:
           done
 
      - name: Install Helm + Helmfile (SAFE)
-  run: |
-    set -e
+       run: |
+         set -e
 
-    # -------------------------
-    # Install Helm
-    # -------------------------
-    curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+         curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+         HELMFILE_VERSION="v0.169.1"
 
-    # -------------------------
-    # Install Helmfile
-    # -------------------------
-    HELMFILE_VERSION="v0.169.1"
+         curl -L -o helmfile.tar.gz \
+         https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION#v}_linux_amd64.tar.gz
 
-    curl -L -o helmfile.tar.gz \
-      https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION#v}_linux_amd64.tar.gz
+         tar -xzf helmfile.tar.gz
+         chmod +x helmfile
+         sudo mv helmfile /usr/local/bin/helmfile
 
-    tar -xzf helmfile.tar.gz
-    chmod +x helmfile
-    sudo mv helmfile /usr/local/bin/helmfile
+        helm plugin install https://github.com/databus23/helm-diff --version v3.8.1
 
-    # -------------------------
-    # Install FIXED helm-diff plugin
-    # -------------------------
-    helm plugin install https://github.com/databus23/helm-diff --version v3.8.1
-
-    # Verify
-    helm version
-    helmfile --version
+        # Verify
+        helm version
+        helmfile --version
 
 
           
