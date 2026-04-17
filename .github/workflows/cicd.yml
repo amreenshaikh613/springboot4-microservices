@@ -76,32 +76,23 @@ jobs:
       # -------------------------
       # INSTALL HELM + HELMFILE
       # -------------------------
-      - name: Install Helm and Helmfile
-        run: |
-          set -e
+      - name: Setup Helmfile
+        uses: mamezou-tech/setup-helmfile@v2.0.0
+        with:
+         helmfile-version: "v0.169.1" # Optional: specify version
+         install-helm: yes
 
-          # Install Helm
-          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-
-          # Install Helmfile (fixed stable version)
-          HELMFILE_VERSION="v0.165.0"
-
-          curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64 \
-            -o helmfile
-
-          chmod +x helmfile
-          sudo mv helmfile /usr/local/bin/helmfile
 
           
 
       # -------------------------
       # DEPLOY
       # -------------------------
-      - name: Deploy with Helmfile
-        run: |
-          export IMAGE_TAG=${IMAGE_TAG}
-          helmfile apply
+      - name: Run Helmfile Apply
+        uses: helmfile/helmfile-action@v1.9.1
+        with:
+          helmfile-args: apply
+
 
       # -------------------------
       # VERIFY DEPLOYMENT
