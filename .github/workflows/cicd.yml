@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       # -------------------------
-      # IMAGE TAG (SAFE)
+      # IMAGE TAG
       # -------------------------
       - name: Set image tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
@@ -74,23 +74,29 @@ jobs:
           done
 
       # -------------------------
-      # INSTALL HELMFILE (FIXED)
+      # INSTALL HELM + HELMFILE
       # -------------------------
       - name: Install Helm and Helmfile
         run: |
-        # Install Helm
+          set -e
+
+          # Install Helm
           curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-    
-        # Install Helmfile (Linux Example)
-          HELMFILE_VERSION="0.155.0"
-          curl -LO https://github.com{HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz
-          tar -xf helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz
+
+          # Install Helmfile (fixed stable version)
+          HELMFILE_VERSION="v0.165.0"
+
+          curl -L \
+            https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64 \
+            -o helmfile
+
+          chmod +x helmfile
           sudo mv helmfile /usr/local/bin/helmfile
 
-
+          
 
       # -------------------------
-      # DEPLOY (HELMFILE)
+      # DEPLOY
       # -------------------------
       - name: Deploy with Helmfile
         run: |
@@ -98,7 +104,7 @@ jobs:
           helmfile apply
 
       # -------------------------
-      # VERIFY
+      # VERIFY DEPLOYMENT
       # -------------------------
       - name: Verify rollout
         run: |
