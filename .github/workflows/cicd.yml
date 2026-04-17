@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       # -------------------------
-      # SET IMAGE TAG
+      # IMAGE TAG
       # -------------------------
       - name: Set image tag
         run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
@@ -46,7 +46,7 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       # -------------------------
-      # EKS ACCESS
+      # EKS KUBECONFIG
       # -------------------------
       - name: Configure kubeconfig
         run: |
@@ -84,17 +84,28 @@ jobs:
           done
 
       # -------------------------
-      # INSTALL HELMFILE
+      # INSTALL HELM
       # -------------------------
-      - name: Install Helmfile (safe)
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      # -------------------------
+      # INSTALL HELMFILE (FIXED)
+      # -------------------------
+      - name: Install Helmfile
         run: |
           set -e
 
           VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f 4)
 
+          echo "Installing Helmfile version: $VERSION"
+
           curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_linux_amd64 \
-            -o helmfile
+            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_${VERSION}_linux_amd64.tar.gz \
+            -o helmfile.tar.gz
+
+          tar -xzf helmfile.tar.gz
 
           chmod +x helmfile
           sudo mv helmfile /usr/local/bin/helmfile
