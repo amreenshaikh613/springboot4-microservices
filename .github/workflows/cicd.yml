@@ -106,7 +106,7 @@ jobs:
       run: |
         cd infra
         terraform init
-    - name: Helm cleanup (safe)
+    - name: Helm cleanup
       run: |
         helm ls -n default
 
