@@ -93,8 +93,7 @@ jobs:
           HELMFILE_VERSION="v0.169.1"
 
           curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_linux_amd64.tar.gz \
-            -o helmfile.tar.gz
+            https://github.com/helmfile/helmfile/releases/download/v1.4.4/helmfile_1.4.4_linux_amd64.tar.gz  -o helmfile.tar.gz
 
           tar -xzf helmfile.tar.gz
 
