@@ -9,3 +9,8 @@ variable "cluster_name" {
 variable "image_tag" {
   default = "latest"
 }
+
+variable "image_tag" {
+  description = "Docker image tag"
+  type        = string
+}
