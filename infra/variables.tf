@@ -6,9 +6,6 @@ variable "cluster_name" {
   default = "springboot-microservices"
 }
 
-variable "image_tag" {
-  default = "latest"
-}
 
 variable "image_tag" {
   description = "Docker image tag"
