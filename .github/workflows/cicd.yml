@@ -18,18 +18,18 @@ jobs:
       # CHECKOUT
       # -------------------------
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # -------------------------
-      # IMAGE TAG
+      # IMAGE TAG (SAFE)
       # -------------------------
       - name: Set image tag
-        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
 
       # -------------------------
       # JAVA SETUP
       # -------------------------
-      - name: Set up JDK
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -58,37 +58,20 @@ jobs:
       # ECR LOGIN
       # -------------------------
       - name: Login to ECR
-        uses: aws-actions/amazon-ecr-login@v1
-
-      # -------------------------
-      # BUILD SERVICES
-      # -------------------------
-      - name: Build services
-        run: |
-          for svc in order-service product-service inventory-service notification-service api-gateway
-          do
-            cd services/$svc
-            mvn clean package -DskipTests
-            cd -
-          done
+        uses: aws-actions/amazon-ecr-login@v2
 
       # -------------------------
       # BUILD & PUSH IMAGES
       # -------------------------
       - name: Build & Push Images
         run: |
-          for svc in order-service product-service inventory-service notification-service api-gateway
+          SERVICES="order-service product-service inventory-service notification-service api-gateway"
+
+          for svc in $SERVICES
           do
             docker build -t $ECR_REGISTRY/$svc:$IMAGE_TAG ./services/$svc
             docker push $ECR_REGISTRY/$svc:$IMAGE_TAG
           done
-
-      # -------------------------
-      # INSTALL HELM
-      # -------------------------
-      - name: Install Helm
-        run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
       # -------------------------
       # INSTALL HELMFILE (FIXED)
@@ -97,15 +80,11 @@ jobs:
         run: |
           set -e
 
-          VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f 4)
-
-          echo "Installing Helmfile version: $VERSION"
+          VERSION="v0.165.0"
 
           curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_${VERSION}_linux_amd64.tar.gz \
-            -o helmfile.tar.gz
-
-          tar -xzf helmfile.tar.gz
+            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_linux_amd64 \
+            -o helmfile
 
           chmod +x helmfile
           sudo mv helmfile /usr/local/bin/helmfile
@@ -113,14 +92,15 @@ jobs:
           helmfile --version
 
       # -------------------------
-      # DEPLOY
+      # DEPLOY (HELMFILE)
       # -------------------------
       - name: Deploy with Helmfile
         run: |
+          export IMAGE_TAG=${IMAGE_TAG}
           helmfile apply
 
       # -------------------------
-      # VERIFY DEPLOYMENT
+      # VERIFY
       # -------------------------
       - name: Verify rollout
         run: |
