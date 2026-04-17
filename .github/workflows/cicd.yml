@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v4
 
       # -------------------------
-      # IMAGE TAG (SAFE)
+      # IMAGE TAG (IMMUTABLE)
       # -------------------------
       - name: Set image tag
         run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
@@ -69,22 +69,33 @@ jobs:
 
           for svc in $SERVICES
           do
-            docker build -t $ECR_REGISTRY/$svc:$IMAGE_TAG ./services/$svc
+            echo "Building $svc"
+
+            docker build \
+              -t $ECR_REGISTRY/$svc:$IMAGE_TAG \
+              ./services/$svc
+
             docker push $ECR_REGISTRY/$svc:$IMAGE_TAG
           done
 
       # -------------------------
-      # INSTALL HELMFILE (FIXED)
+      # INSTALL HELM + HELMFILE (NO PLUGINS)
       # -------------------------
-      - name: Install Helmfile
+      - name: Install Helm + Helmfile
         run: |
           set -e
 
-          VERSION="v0.165.0"
+          # Install Helm
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          helm version
+
+          # Install Helmfile
+          HELMFILE_VERSION="v0.169.1"
 
           curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_linux_amd64 \
-            -o helmfile
+            https://github.com/helmfile/helmfile/releases/download/v1.4.4/helmfile_1.4.4_linux_amd64.tar.gz  -o helmfile.tar.gz
+
+          tar -xzf helmfile.tar.gz
 
           chmod +x helmfile
           sudo mv helmfile /usr/local/bin/helmfile
@@ -92,17 +103,16 @@ jobs:
           helmfile --version
 
       # -------------------------
-      # DEPLOY (HELMFILE)
+      # DEPLOY (CLEAN HELMFILE APPLY)
       # -------------------------
       - name: Deploy with Helmfile
         run: |
-          export IMAGE_TAG=${IMAGE_TAG}
-          helmfile apply
+          helmfile --state-values-set imageTag=${IMAGE_TAG} apply
 
       # -------------------------
-      # VERIFY
+      # VERIFY ROLLOUT
       # -------------------------
-      - name: Verify rollout
+      - name: Verify deployment
         run: |
           kubectl rollout status deployment/order-service
           kubectl rollout status deployment/product-service
