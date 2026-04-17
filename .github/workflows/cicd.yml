@@ -76,18 +76,17 @@ jobs:
       # -------------------------
       # INSTALL HELMFILE (FIXED)
       # -------------------------
-      - name: Install Helmfile
+      - name: Install Helm and Helmfile
         run: |
-          set -e
-
-          VERSION="v0.165.0"
-
-          curl -L \
-            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_linux_amd64 \
-            -o helmfile
-
-          chmod +x helmfile
+        # Install Helm
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+    
+        # Install Helmfile (Linux Example)
+          HELMFILE_VERSION="0.155.0"
+          curl -LO https://github.com{HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz
+          tar -xf helmfile_${HELMFILE_VERSION}_linux_amd64.tar.gz
           sudo mv helmfile /usr/local/bin/helmfile
+
 
           helmfile --version
 
