@@ -99,20 +99,13 @@ jobs:
     # TERRAFORM DEPLOYMENT
     # =========================
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
+   - name: Install Helmfile
+     run: |
+       curl -L https://github.com/helmfile/helmfile/releases/latest/download/helmfile_linux_amd64 -o helmfile
+       chmod +x helmfile
+       sudo mv helmfile /usr/local/bin/helmfile
 
-    - name: Terraform Init
-      run: |
-        cd infra
-        terraform init
-    - name: Helm cleanup
-      run: |
-        helm ls -n default
-
-    - name: Terraform Apply
-      run: |
-        cd infra
-        terraform apply -auto-approve -var="image_tag=${IMAGE_TAG}"
-        terraform apply -auto-approve      -var="image_tag=${IMAGE_TAG}"
-
+   - name: Deploy using Helmfile
+     run: |
+       export IMAGE_TAG=${IMAGE_TAG}
+       helmfile apply
