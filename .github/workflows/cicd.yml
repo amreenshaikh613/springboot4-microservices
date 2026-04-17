@@ -73,25 +73,25 @@ jobs:
             docker push $ECR_REGISTRY/$svc:$IMAGE_TAG
           done
 
-     - name: Install Helm + Helmfile (SAFE)
-       run: |
-         set -e
+      - name: Install Helm + Helmfile (SAFE)
+        run: |
+          set -e
 
-         curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-         HELMFILE_VERSION="v0.169.1"
+          curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          HELMFILE_VERSION="v0.169.1"
 
-         curl -L -o helmfile.tar.gz \
-         https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION#v}_linux_amd64.tar.gz
+          curl -L -o helmfile.tar.gz \
+          https://github.com/helmfile/helmfile/releases/download/${HELMFILE_VERSION}/helmfile_${HELMFILE_VERSION#v}_linux_amd64.tar.gz
 
-         tar -xzf helmfile.tar.gz
-         chmod +x helmfile
-         sudo mv helmfile /usr/local/bin/helmfile
+          tar -xzf helmfile.tar.gz
+          chmod +x helmfile
+          sudo mv helmfile /usr/local/bin/helmfile
 
-        helm plugin install https://github.com/databus23/helm-diff --version v3.8.1
+          helm plugin install https://github.com/databus23/helm-diff --version v3.8.1
 
-        # Verify
-        helm version
-        helmfile --version
+          # Verify
+          helm version
+          helmfile --version
 
 
           
