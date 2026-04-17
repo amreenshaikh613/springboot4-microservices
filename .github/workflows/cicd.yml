@@ -1,8 +1,8 @@
-name: CI-CD Pipeline
+name: ci-cd-pipeline
 
 on:
   push:
-    branches: [ "main", "eks" ]
+    branches: ["main", "eks"]
   workflow_dispatch:
 
 env:
@@ -14,98 +14,103 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # -------------------------
+      # CHECKOUT
+      # -------------------------
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set image tag
-      run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+      # -------------------------
+      # SET IMAGE TAG
+      # -------------------------
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
 
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+      # -------------------------
+      # JAVA SETUP
+      # -------------------------
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-    - name: Configure kubeconfig for EKS
-      run: |
-            aws eks update-kubeconfig \
+      # -------------------------
+      # AWS AUTH
+      # -------------------------
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      # -------------------------
+      # EKS ACCESS
+      # -------------------------
+      - name: Configure kubeconfig
+        run: |
+          aws eks update-kubeconfig \
             --name springboot-microservices \
-            --region us-west-2
+            --region $AWS_REGION
 
-    - name: Login to ECR
-      uses: aws-actions/amazon-ecr-login@v1
+      # -------------------------
+      # ECR LOGIN
+      # -------------------------
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
 
-    # =========================
-    # BUILD & PUSH SERVICES
-    # =========================
+      # -------------------------
+      # BUILD SERVICES
+      # -------------------------
+      - name: Build services
+        run: |
+          for svc in order-service product-service inventory-service notification-service api-gateway
+          do
+            cd services/$svc
+            mvn clean package -DskipTests
+            cd -
+          done
 
-    - name: Build Order Service
-      run: |
-        cd services/order-service
-        mvn clean package -DskipTests
+      # -------------------------
+      # BUILD & PUSH IMAGES
+      # -------------------------
+      - name: Build & Push Images
+        run: |
+          for svc in order-service product-service inventory-service notification-service api-gateway
+          do
+            docker build -t $ECR_REGISTRY/$svc:$IMAGE_TAG ./services/$svc
+            docker push $ECR_REGISTRY/$svc:$IMAGE_TAG
+          done
 
-    - name: Build Product Service
-      run: |
-        cd services/product-service
-        mvn clean package -DskipTests
+      # -------------------------
+      # INSTALL HELM + HELMFILE
+      # -------------------------
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 
-    - name: Build Inventory Service
-      run: |
-        cd services/inventory-service
-        mvn clean package -DskipTests
+      - name: Install Helmfile
+        run: |
+          curl -L https://github.com/helmfile/helmfile/releases/latest/download/helmfile_linux_amd64 -o helmfile
+          chmod +x helmfile
+          sudo mv helmfile /usr/local/bin/helmfile
 
-    - name: Build Notification Service
-      run: |
-        cd services/notification-service
-        mvn clean package -DskipTests
+      # -------------------------
+      # DEPLOY
+      # -------------------------
+      - name: Deploy with Helmfile
+        run: |
+          export IMAGE_TAG=${IMAGE_TAG}
+          helmfile apply
 
-    - name: Build API Gateway Service
-      run: |
-        cd services/api-gateway
-        mvn clean package -DskipTests
-
-    - name: Build & Push Order Service
-      run: |
-        docker build -t $ECR_REGISTRY/order-service:$IMAGE_TAG  ./services/order-service
-        #docker tag order-service:$IMAGE_TAG $ECR_REGISTRY/order-service:$IMAGE_TAG
-        docker push $ECR_REGISTRY/order-service:$IMAGE_TAG
-
-    - name: Build & Push Product Service
-      run: |
-        docker build -t $ECR_REGISTRY/product-service:$IMAGE_TAG ./services/product-service
-        #docker tag product-service:$IMAGE_TAG $ECR_REGISTRY/product-service:$IMAGE_TAG
-        docker push $ECR_REGISTRY/product-service:$IMAGE_TAG
-
-    - name: Build & Push Inventory Service
-      run: |
-        docker build -t $ECR_REGISTRY/inventory-service:$IMAGE_TAG ./services/inventory-service
-        #docker tag inventory-service:$IMAGE_TAG $ECR_REGISTRY/inventory-service:$IMAGE_TAG
-        docker push $ECR_REGISTRY/inventory-service:$IMAGE_TAG
-
-    - name: Build & Push Notification Service
-      run: |
-        docker build -t $ECR_REGISTRY/notification-service:$IMAGE_TAG ./services/notification-service
-        #docker tag notification-service:$IMAGE_TAG $ECR_REGISTRY/notification-service:$IMAGE_TAG
-        docker push $ECR_REGISTRY/notification-service:$IMAGE_TAG
-
-    - name: Build & Push API Gateway
-      run: |
-        docker build -t $ECR_REGISTRY/api-gateway:$IMAGE_TAG ./services/api-gateway
-        #docker tag api-gateway:$IMAGE_TAG $ECR_REGISTRY/api-gateway:$IMAGE_TAG
-        docker push $ECR_REGISTRY/api-gateway:$IMAGE_TAG
-
-    # =========================
-    # TERRAFORM DEPLOYMENT
-    # =========================
-
-   - name: Install Helmfile
-     run: |
-       curl -L https://github.com/helmfile/helmfile/releases/latest/download/helmfile_linux_amd64 -o helmfile
-       chmod +x helmfile
-       sudo mv helmfile /usr/local/bin/helmfile
-
-   - name: Deploy using Helmfile
-     run: |
-       export IMAGE_TAG=${IMAGE_TAG}
-       helmfile apply
+      # -------------------------
+      # VERIFY DEPLOYMENT
+      # -------------------------
+      - name: Verify rollout
+        run: |
+          kubectl rollout status deployment/order-service
+          kubectl rollout status deployment/product-service
+          kubectl rollout status deployment/inventory-service
+          kubectl rollout status deployment/notification-service
+          kubectl rollout status deployment/api-gateway
