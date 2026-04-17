@@ -84,24 +84,28 @@ jobs:
           done
 
       # -------------------------
-      # INSTALL HELM + HELMFILE
+      # INSTALL HELMFILE
       # -------------------------
-      - name: Install Helm
+      - name: Install Helmfile (safe)
         run: |
-          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+          set -e
 
-      - name: Install Helmfile
-        run: |
-          curl -L https://github.com/helmfile/helmfile/releases/latest/download/helmfile_linux_amd64 -o helmfile
+          VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f 4)
+
+          curl -L \
+            https://github.com/helmfile/helmfile/releases/download/${VERSION}/helmfile_linux_amd64 \
+            -o helmfile
+
           chmod +x helmfile
           sudo mv helmfile /usr/local/bin/helmfile
+
+          helmfile --version
 
       # -------------------------
       # DEPLOY
       # -------------------------
       - name: Deploy with Helmfile
         run: |
-          export IMAGE_TAG=${IMAGE_TAG}
           helmfile apply
 
       # -------------------------
