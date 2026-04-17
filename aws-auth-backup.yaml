@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  mapRoles: |
+    - rolearn: arn:aws:iam::741458575095:role/eksctl-springboot-microservices-no-NodeInstanceRole-evX9as2TRncQ
+      username: system:node:{{EC2PrivateDNSName}}
+      groups:
+        - system:bootstrappers
+        - system:nodes
+
+  mapUsers: |
+    - userarn: arn:aws:iam::741458575095:user/github-actions-user
+      username: github-actions-user
+      groups:
+        - system:masters
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2026-04-02T18:54:39Z"
+  name: aws-auth
+  namespace: kube-system
+  resourceVersion: "1175"
+  uid: 4d223167-3ee0-43d2-a8a7-5a147409327e
