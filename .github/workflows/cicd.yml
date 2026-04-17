@@ -17,12 +17,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set image tag
+      run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+
+    - name: Configure kubeconfig for EKS
+      run: |
+            aws eks update-kubeconfig \
+            --name springboot-microservices \
+            --region us-west-2
 
     - name: Login to ECR
       uses: aws-actions/amazon-ecr-login@v1
@@ -58,33 +67,33 @@ jobs:
 
     - name: Build & Push Order Service
       run: |
-        docker build -t order-service ./services/order-service
-        docker tag order-service:latest $ECR_REGISTRY/order-service:latest
-        docker push $ECR_REGISTRY/order-service:latest
+        docker build -t $ECR_REGISTRY/order-service:$IMAGE_TAG  ./services/order-service
+        docker tag order-service:$IMAGE_TAG $ECR_REGISTRY/order-service:$IMAGE_TAG
+        docker push $ECR_REGISTRY/order-service:$IMAGE_TAG
 
     - name: Build & Push Product Service
       run: |
-        docker build -t product-service ./services/product-service
-        docker tag product-service:latest $ECR_REGISTRY/product-service:latest
-        docker push $ECR_REGISTRY/product-service:latest
+        docker build -t $ECR_REGISTRY/product-service:$IMAGE_TAG ./services/product-service
+        docker tag product-service:$IMAGE_TAG $ECR_REGISTRY/product-service:$IMAGE_TAG
+        docker push $ECR_REGISTRY/product-service:$IMAGE_TAG
 
     - name: Build & Push Inventory Service
       run: |
-        docker build -t inventory-service ./services/inventory-service
-        docker tag inventory-service:latest $ECR_REGISTRY/inventory-service:latest
-        docker push $ECR_REGISTRY/inventory-service:latest
+        docker build -t $ECR_REGISTRY/inventory-service:$IMAGE_TAG ./services/inventory-service
+        docker tag inventory-service:$IMAGE_TAG $ECR_REGISTRY/inventory-service:$IMAGE_TAG
+        docker push $ECR_REGISTRY/inventory-service:$IMAGE_TAG
 
     - name: Build & Push Notification Service
       run: |
-        docker build -t notification-service ./services/notification-service
-        docker tag notification-service:latest $ECR_REGISTRY/notification-service:latest
-        docker push $ECR_REGISTRY/notification-service:latest
+        docker build -t $ECR_REGISTRY/notification-service:$IMAGE_TAG ./services/notification-service
+        docker tag notification-service:$IMAGE_TAG $ECR_REGISTRY/notification-service:$IMAGE_TAG
+        docker push $ECR_REGISTRY/notification-service:$IMAGE_TAG
 
     - name: Build & Push API Gateway
       run: |
-        docker build -t api-gateway ./services/api-gateway
-        docker tag api-gateway:latest $ECR_REGISTRY/api-gateway:latest
-        docker push $ECR_REGISTRY/api-gateway:latest
+        docker build -t $ECR_REGISTRY/api-gateway:$IMAGE_TAG ./services/api-gateway
+        docker tag api-gateway:$IMAGE_TAG $ECR_REGISTRY/api-gateway:$IMAGE_TAG
+        docker push $ECR_REGISTRY/api-gateway:$IMAGE_TAG
 
     # =========================
     # TERRAFORM DEPLOYMENT
@@ -97,8 +106,14 @@ jobs:
       run: |
         cd infra
         terraform init
+    - name: Helm cleanup (safe)
+      run: |
+        helm ls -n default
 
     - name: Terraform Apply
       run: |
         cd infra
         terraform apply -auto-approve
+         \
+       -var="image_tag=${IMAGE_TAG}"
+
