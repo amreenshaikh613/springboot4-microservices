@@ -107,7 +107,7 @@ jobs:
       # -------------------------
       - name: Deploy with Helmfile
         run: |
-          helmfile --state-values-set imageTag=${IMAGE_TAG} apply
+          helmfile --state-values-set imageTag=${IMAGE_TAG} apply --skip-diff
 
       # -------------------------
       # VERIFY ROLLOUT
