@@ -222,7 +222,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-				 <image>
+				 <!--image>
                     <name>docker.io/amreenk/${project.artifactId}:${project.version}</name>
                     <publish>true</publish>
                 </image>
@@ -232,7 +232,7 @@
       					<password>${dockerPassword}</password>
       					 <url>https://docker.io</url>
 				    </publishRegistry>
-                </docker>
+                </docker-->
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
