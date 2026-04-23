@@ -16,7 +16,7 @@ import com.demo.order.client.InventoryClient;
 @Configuration
 public class RestClientConfig {
 
-	@Value("${INVENTORY_SERVICE_URL}")
+	@Value("${inventory.service.url}")
 	private String inventoryServiceUrl;
 
 	@Bean

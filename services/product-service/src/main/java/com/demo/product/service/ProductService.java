@@ -2,6 +2,7 @@ package com.demo.product.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class ProductService {
 		Product product = new Product(productRequest.id(), productRequest.name(), productRequest.description(),
 				productRequest.price());
 		Product save = productRepository.save(product);
+		System.out.println("Product saved");
 		return new ProductResponse(save.getId(), save.getName(), save.getDescription(), save.getPrice());
 	}
 

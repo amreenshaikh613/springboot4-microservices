@@ -11,6 +11,7 @@ import com.demo.order.dto.OrderRequest;
 import com.demo.order.event.OrderPlacedEvent;
 import com.demo.order.model.Order;
 import com.demo.order.repository.OrderRepository;
+import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +28,11 @@ public class OrderService {
 	private final InventoryClient inventoryClient = null;
 	
 	@Autowired
-	private KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate = null;
+//	private KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate = null;
+	private PubSubTemplate pubSubTemplate = null;
+	
 	
 	final static Logger logger = LoggerFactory.getLogger(OrderService.class);
-
 
 
 	public void placeOrder(OrderRequest orderRequest) 
@@ -44,7 +46,11 @@ public class OrderService {
 			OrderPlacedEvent orderPlacedEvent = new OrderPlacedEvent();
 			orderPlacedEvent.setOrderNumber(orderRequest.orderNumber());
 			orderPlacedEvent.setEmail("amreen23287@gmail.com");
-			kafkaTemplate.send("order-placed", orderPlacedEvent);
+//			kafkaTemplate.send("order-placed", orderPlacedEvent);
+			pubSubTemplate.publish(
+			        "order-events",
+			        orderPlacedEvent.toString()
+			    );
 			logger.info("Order placed event sent successfully");
 		}
 		else
