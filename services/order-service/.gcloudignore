@@ -1,0 +1,18 @@
+ven / build output
+target/
+
+# OS / runtime files
+*.sock
+*.log
+
+# MySQL / Keycloak runtime volumes
+**/volume-data/
+
+# Docker / IDE
+.idea/
+*.iml
+.git
+.gitignore
+
+# node (if any)
+node_modules/

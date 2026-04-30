@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "springboot4-microservices",
+  "private_key_id": "5e9cf7289c460f6b14e05a944155a67ff1daedcd",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDA1+aRCOt4xSW/\nTTouGs9BYeEEmfphWP7eT12elgyhEe5EtFwRR4rm17NV7DDcEE+JjMmxco4wqnx0\nBjRElgVboYtD/OLlO078v8zk+T9qKEGSBB9fZ8H3Pfr06t7DgusunLY2W8RTH51g\nX2hY47x5mc3Fuf2F3eiFvBiep1y3JhA3qXQG1T4cxhkJc+46O67ox/+GttqHwOie\nUWOyq6DYaBBUvqqFMWAtM+OdRLV+kHE7OyIfMsi9bfxy3+6NXmofHHlVjzdlVggD\ne1Pt76mIIuDTpcYZHFetVlHZ9O0eVqHgueUtBqieYz6rdnLi/Y7vJ0LlPOEn6lqC\njDGBFuy1AgMBAAECggEAT1SBtQhGVdhEPv42AOFmgS8SsiHlrkY+EpXznVl8uIX3\nzqujdDhKG8yAKciQEPdkwOD519WYSMzZhaFHvy835Qn/kGhnroVHaRI957PhMnp8\n/uRTQ5wbXupQYpB8M1GYDgTJsHLvwIIw64RUGL0Wu69Zxw1MDdXL4bgPKLUQnwaC\nbH7DjMrN/QC9ZhvpnEkbdA2NPAu1r2uHy+ketN/HsgtEotG+VcQdwNXdgHl5eEDZ\n7jUc2q8E32FYwkd6+tJ9TY4GMbxk38gkUIADbsC+1hX+N42gxLfwptYuGQBNsNEw\n2s85X3rEC5WJ65hwpAouAOOs1sx7I1bQduoJdOg3wQKBgQDrEn4esCqG012Vf8L2\nNJXKKj8LdWsvboAREvI1rJAJlxcToPXIsEoxosI56xV4golEY22vy2r0rwzxArX9\nivCNWsuJYWidjBU8SM/wVwm1eKJ5ZDEd+CB4YANbRoX4PEWPxm8nzk1d4NQ7AVTl\na2lhc3E3Ftw7cUbfhH0nbGbG1wKBgQDSAvlZLdBKvEdLaT32Hv6L5JVmOhRZjyNz\ngS8RyL4v7R6ioG3dqIQ+JHcl6eBK8g39wQW1BqPTT80kBCPj6/e8jrrLzARarr3L\nV9/rRghP6aAdxfFPrxtFQgQ3m/Tk6380BVM1QQ7yQfMVRw0T9R8Fa74esqNTXqc+\nFy3gnUGTUwKBgQDBEBoXGDaFLxlATIMR9JRFSrcmsRQMC6QQ4c+dt5FA3x9r1pmm\nbuswou0D5ohmxkb4rPSMGfRI63AkjUZs6uywG67osODb7A4QyfhF+yYVLfO64UfZ\nxkzcsHZxQ5WKD+5Nq/rk5XHzNVD4+RoBplsRV1/Xj+XmyB0ePFERzN0IVwKBgQCv\nTdA6wuVmHTgeGOGh+0lcGRkk1kJ6Z+Od3S4fWER52SODeQt8xdhtzx6uRUX3CYro\nUSGkdMB3+dsxv0r+TNDlUvdWexz/XXIMtXOy/yidHFWNxNekPnUzIOJIUSThmjr6\nf59virkhPC/fiQm/qROWANQY5+EyDIbqa4rePiapBQKBgF5R7yXaMrCoGSIn+p93\nPUK9ywlR815DNoagMZi2RkqPX8ZBMLRmsEWU1O1RkDLF68ovCquYxOiMRiA6hp1I\nMgxmm0xyUBhnO9yByKgySJD7Hf8T5tPv/RtKuoFI4gzN0FnZdMHyx7j0ghMKah6Z\nPLvWavM81hekuD4CnQRyQG2x\n-----END PRIVATE KEY-----\n",
+  "client_email": "github-actions@springboot4-microservices.iam.gserviceaccount.com",
+  "client_id": "108824677245076419215",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/github-actions%40springboot4-microservices.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

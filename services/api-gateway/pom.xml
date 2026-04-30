@@ -47,6 +47,10 @@
       <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
       <version>2.5.0</version>
    </dependency>
+   <dependency>
+    <groupId>io.micrometer</groupId>
+    <artifactId>micrometer-tracing-bridge-otel</artifactId>
+</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -63,7 +67,41 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
+    </dependency>
+     <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-stackdriver</artifactId>
+    </dependency>
+
+    <!-- Prometheus (optional but useful) -->
+    <dependency>
+        <groupId>io.micrometer</groupId>
+        <artifactId>micrometer-registry-prometheus</artifactId>
+    </dependency>
+
+    <!-- OpenTelemetry Spring Boot -->
+    <!--dependency>
+        <groupId>io.opentelemetry.instrumentation</groupId>
+        <artifactId>opentelemetry-spring-boot-starter</artifactId>
+        <version>2.8.0</version>
+    </dependency-->
+
+    <!-- GCP Trace Exporter -->
+    <!--dependency>
+    <groupId>com.google.cloud</groupId>
+    <artifactId>opentelemetry-cloud-trace-exporter</artifactId>
+	 <version>0.34.0</version-->
+ <!-- Source: https://mvnrepository.com/artifact/com.google.cloud.opentelemetry/exporter-trace -->
+<!--dependency>
+    <groupId>com.google.cloud.opentelemetry</groupId>
+    <artifactId>exporter-trace</artifactId>
+    <version>0.36.0</version>
+    <scope>runtime</scope>
+</dependency-->
+    <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

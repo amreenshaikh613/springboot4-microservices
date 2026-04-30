@@ -1,0 +1,12 @@
+# Ignore runtime / local files
+.git
+.gitignore
+node_modules
+target
+build
+
+# VERY IMPORTANT
+volume-data/
+*.sock
+*.log
+tmp/
